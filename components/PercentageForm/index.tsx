@@ -1,25 +1,31 @@
 "use client";
 
+import clsx from "clsx";
 import { useState } from "react";
+type StatesType = number | undefined | null;
 
 export function PercentageForm() {
   const inputCommonClasses =
     "bg-white/70 p-2 hover:bg-white w-50 h-14 rounded-2xl text-2xl";
 
-  const [firstValue, setFirstValue] = useState("");
-  const [secondValue, setSecondValue] = useState("");
-  const [result, setResult] = useState(0);
+  const [firstValue, setFirstValue] = useState<StatesType>(undefined);
+  const [secondValue, setSecondValue] = useState<StatesType>(undefined);
+  const [result, setResult] = useState<StatesType>(undefined);
 
   function handlePercent(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
 
     if (!secondValue) return;
-    const res = setResult((Number(firstValue) / Number(secondValue)) * 100);
+    const res = setResult((Number(firstValue) * Number(secondValue)) / 100);
 
     return res;
   }
 
-  function handleClearAll() {}
+  function handleClearAll() {
+    setFirstValue(null);
+    setSecondValue(null);
+    setResult(null);
+  }
   return (
     <form
       onSubmit={handlePercent}
@@ -29,21 +35,29 @@ export function PercentageForm() {
         <input
           type="number"
           placeholder="%"
-          className={inputCommonClasses}
-          onChange={(e) => setFirstValue(e.target.value)}
+          className={clsx(inputCommonClasses, "no-spinner")}
+          value={firstValue ? firstValue : ""}
+          onChange={(e) =>
+            setFirstValue(e.target.value === "" ? null : Number(e.target.value))
+          }
         />
         <span className="text-white">DE</span>
         <input
           type="number"
-          className={inputCommonClasses}
-          onChange={(e) => setSecondValue(e.target.value)}
+          className={clsx(inputCommonClasses, "no-spinner")}
+          value={secondValue ? secondValue : ""}
+          onChange={(e) =>
+            setSecondValue(
+              e.target.value === "" ? null : Number(e.target.value),
+            )
+          }
         />
         <span className="text-white">=</span>
 
         <input
           type="text"
           disabled
-          value={result}
+          value={result ? result : ""}
           className={inputCommonClasses}
         />
       </div>
